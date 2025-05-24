@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Settings</title>
+<style>
+:root {
+  --accent: #DAD2FF;
+  --primary: #56388C;
+  --light-bg: #f4f9f6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--accent);
+  display: flex;
+  overflow-y: auto;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 100%;
+  background: var(--primary);
+  overflow: hidden;
+  transition: width 0.3s ease;
+  z-index: 1001;
+}
+
+.sidebar:hover {
+  width: 200px;
+}
+
+.sidebar .icon {
+  text-align: center;
+  font-size: 24px;
+  color: white;
+  padding: 20px 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 30px;
+  display: none;
+}
+
+.sidebar:hover ul {
+  display: block;
+}
+
+.sidebar ul li {
+  padding: 12px 20px;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  padding: 7px;
+}
+
+.sidebar ul li a:hover {
+  background: var(--accent);
+  border-radius: 4px;
+  color: black;
+}
+
+
+    .main {
+      margin-left: 60px;
+      padding: 20px;
+      flex: 1;
+      width: calc(100% - 60px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .top-bar {
+      margin-top: 30px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .top-bar a {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      outline: invert;
+    }
+
+    .top-bar a:hover{
+      color: black;
+    }
+
+    h2 {
+      margin-top: 30px;
+      font-size: 25px;
+    }
+
+    .settings-container {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      width: 500px;
+      background: #ab9bcc;
+      align-items: center;
+      text-align: center;
+      border-radius: 10px;
+    }
+
+    .setting-option {
+      background-color: var(--light-bg);
+      width: 420px;
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .setting-option label {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .setting-option button{
+      margin-top: 10px;
+      padding: 8px 12px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: larger;
+      width: 380px;
+      transition: background-color 0.3s;
+    }
+
+    .setting-option button:hover{
+      background-color: #9881c2;
+    }
+
+</style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+<div class="sidebar">
+  <div class="icon">☰</div>
+  <ul>
+    <li><a href="{{ url_for('home') }}">Home</a></li>
+    <li><a href="{{ url_for('edit_profile') }}">Profile</a></li>
+    <li><a href="#">Product Category</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="{{ url_for('logout') }}">Log out</a></li>
+    <li><a href="{{ url_for('cart') }}">Cart</a></li>
+  </ul>
+</div>
+
+  <!-- Main Content -->
+  <div class="main">
+    
+    <div class="settings-container">
+      <h2>Settings</h2>
+
+      <div class="setting-option">
+        <label>Edit Profile</label>
+        <button onclick=edit_profile() class="btn">Update</button>
+      </div>
+
+      <div class="setting-option">
+        <label>Change Phone Number</label>
+        <button onclick="updatephone()" class="btn">Change</button>
+      </div>
+
+      <div class="setting-option">
+        <label>Change Address</label>
+        <button onclick="updateaddress()" class="btn">Change</button>
+      </div>
+
+      <div class="setting-option">
+        <label>Contact Us</label>
+        <button onclick="contact()" class="btn">contact</button>
+      </div>
+
+      <div class="setting-option">
+        <label>Change Password</label>
+        <button onclick="passchange()" class="btn">Change</button>
+      </div>
+
+      <div class="setting-option">
+        <label>View Orders</label>
+        <button onclick="vieworders()" class="btn">View</button>
+      </div>
+    </div>
+    <div class="top-bar">
+      <a href="{{ url_for('admin_login') }}">Admin Login</a>
+    </div>
+  </div>
+
+
+  <script>
+    function edit_profile(){
+      window.location.href='{{ url_for("edit_profile") }}'
+    }
+
+    function vieworders(){
+      window.location.href='{{ url_for("view_orders") }}'
+    }
+
+    function updatephone(){
+      window.location.href="{{ url_for('update', section='phone') }}"
+    }
+
+    function updateaddress(){
+      window.location.href="{{ url_for('update', section='address') }}"
+    }
+
+    function passchange(){
+      window.location.href = "{{ url_for('update', section='password') }}"
+    }
+
+    function contact(){
+      window.location.href = "{{ url_for('contact') }}"
+    }
+
+  </script>
+</body>
+</html>

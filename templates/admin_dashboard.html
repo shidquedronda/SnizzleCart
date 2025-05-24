@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class="flashes">
+      {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .dashboard-header {
+
+      background-color: #5cb85c;
+      color: white;
+      padding: 20px;
+    }
+
+    .dashboard-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 40px;
+      gap: 30px;
+      flex: 1;
+    }
+
+    .tool-card {
+      background-color: white;
+      border-radius: 12px;
+      width: 250px;
+      height: 150px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .tool-card h3 {
+      margin: 10px 0;
+      color: #5cb85c;
+    }
+
+    .tool-icon {
+      font-size: 32px;
+    }
+
+    .footer {
+      background-color: #5cb85c;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+    }
+
+    .flashes {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    list-style: none;
+    padding: 1em;
+    margin: 0;
+    text-align: center;
+  }
+
+  .flashes li {
+    display: inline-block;
+    padding: 0.75em 1.5em;
+    margin: 0.5em auto;
+    border-radius: 5px;
+    font-weight: bold;
+    font-family: sans-serif;
+  }
+
+  .flashes .success {
+    background-color: #d4edda;
+    color: #2c74a1;
+    border: 1px solid #c3e6cb;
+  }
+
+  .flashes .error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+  .logout{
+    text-align: end;
+    font-size: 18px;
+  }
+
+  .logout button {
+    width: 80px;
+    height: 40px;
+    padding: 5px;
+    font-size: large;
+    color: #5cb85c;
+    border-radius: 7px;
+    border-color: white;
+    background-color: white;
+    box-shadow: inset;
+  }
+
+  .headerG{
+    text-align: center;
+  }
+
+  </style>
+
+  <!-- Optional: Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <div class="dashboard-header">
+    <div class="logout">
+      <button onclick="logout()">Logout</button>
+    </div>
+    <div class="headerG">
+      <h1>Admin Dashboard</h1>
+    </div>
+  </div>
+
+
+  <div class="dashboard-container">
+    <div class="tool-card" onclick="AddProduct()">
+      <div class="tool-icon"><i class="fas fa-plus-circle"></i></div>
+      <h3>Add Product</h3>
+    </div>
+    
+    <div class="tool-card" onclick="ViewOrders()">
+      <div class="tool-icon"><i class="fas fa-box-open"></i></div>
+      <h3>View Orders</h3>
+    </div>
+
+    <div class="tool-card" onclick="removeProduct()">
+      <div class="tool-icon"><i class="fas fa-box-open"></i></div>
+      <h3>Remove Product</h3>
+    </div>
+
+    <div class="tool-card" onclick="register()">
+      <div class="tool-icon"><i class="fas fa-user-plus"></i></div>
+      <h3>Register Admin</h3>
+    </div>
+  </div>
+
+  <div class="footer">
+    © 2025 All rights reserved
+  </div>
+
+<script>
+  function AddProduct(){
+    window.location.href = "{{ url_for('add_product') }}"
+  }
+
+  function ViewOrders(){
+    window.location.href = "{{ url_for('admin_view_order') }}"
+  }
+
+  function register(){
+    window.location.href = "{{ url_for('admin_register')}}"
+  }
+
+  function removeProduct(){
+    window.location.href = "{{ url_for('remove_product_view')}}"
+  }
+
+  function logout(){
+    window.location.href = "{{ url_for('admin_logout') }}"
+  }
+
+
+  setTimeout(() => {
+    const flashContainer = document.querySelector('.flashes');
+    if (flashContainer) {
+      flashContainer.style.transition = 'opacity 0.5s ease-out';
+      flashContainer.style.opacity = '0';
+      setTimeout(() => flashContainer.remove(), 500); // Remove from DOM
+    }
+   }, 3000);
+</script>
+
+</body>
+</html>

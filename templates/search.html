@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Search Results</title>
+  <style>
+    :root {
+      --accent: #DAD2FF;
+      --primary: #56388C;
+      --light-bg: #f4f9f6;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--accent);
+      display: flex;
+      overflow: hidden;
+
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 60px;
+      height: 100%;
+      background: var(--primary);
+      overflow: hidden;
+      transition: width 0.3s ease;
+      z-index: 1001;
+    }
+
+    .sidebar:hover {
+      width: 200px;
+    }
+
+    .sidebar .icon {
+      text-align: center;
+      font-size: 24px;
+      color: white;
+      padding: 20px 0;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 30px;
+      display: none;
+    }
+
+    .sidebar:hover ul {
+      display: block;
+    }
+
+    .sidebar ul li {
+      padding: 12px 20px;
+    }
+
+    .sidebar ul li a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 7px;
+    }
+
+    .sidebar ul li a:hover {
+      background: var(--accent);
+      border-radius: 4px;
+      color: black;
+    }
+
+    .main-content {
+      margin-left: 60px;
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .header h2 {
+      color: var(--primary);
+    }
+
+    .search-bar {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .search-bar input {
+      width: 97%;
+      padding: 10px;
+      border: 2px solid #8061ba;
+      border-radius: 5px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    #suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      z-index: 5;
+      display: none;
+      max-height: 150px;
+      overflow-y: auto;
+      list-style: none;
+    }
+
+    #suggestions li {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    #suggestions li:hover {
+      background: #eee;
+    }
+
+    .product-area {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .category-section {
+      margin-bottom: 30px;
+      text-align: center;
+      align-content: center;
+    }
+
+    .category-title {
+      color: #523092;
+    }
+
+    .titleM{
+      width: 200px;
+      height: 30px;
+      border-radius: 40px;
+      background-color: #b39df8;
+      padding-top: 4px;
+      align-self: center;
+      margin-left: 850px;
+    }
+
+    .slider-wrapper {
+      position: relative;
+      display: flex;
+      scrollbar-width: none;
+      align-items: center;
+      overflow: visible;
+    }
+
+    .slider-wrapper::-webkit-scrollbar{
+      display: none;
+    }
+
+    .scroll-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #8061ba;
+      color: black;
+      border: none;
+      padding: 10px 14px;
+      cursor: pointer;
+      z-index: 100;
+      font-size: 20px;
+      opacity: 0.9;
+      transition: background-color 0.3s;
+      display: none;
+      height: 345px;
+    }
+
+    .scroll-btn:hover {
+      background-color: #285f44;
+    }
+
+    .scroll-btn.left {
+      left: 0;
+      background: linear-gradient(to right,  #8b6dc2, transparent);
+      border-radius: 8px 0px 0px 8px;
+    }
+
+    .scroll-btn.right {
+      right: 0;
+      margin-right: 10px;
+      border-radius: 0px 20px 20px 0px;
+      background: linear-gradient(to left, #8c70be, transparent);
+    }
+
+    .scroll-btn.left:hover{
+      background: linear-gradient(to right, #b9a4f9, transparent); /* Slightly lighter on hover */
+    }
+
+    .scroll-btn.right:hover{
+      background: linear-gradient(to left, #b39df8, transparent); /* Optional hover effect */
+    }
+
+    .product-slider {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      flex-grow: 1;
+      padding: 10px 50px;
+      width: 1770px;
+      scrollbar-width: none;
+    }
+
+    .product-slider::-webkit-scrollbar{
+      display: none;
+    }
+
+    .product-card {
+      width: 230px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    .product-card:hover {
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 160px;
+      border-radius: 5px;
+      object-fit: cover;
+    }
+
+    .product-card h4 {
+      margin: 10px 0 5px;
+      color: var(--primary);
+    }
+
+    .product-card p {
+      margin: 0 0 10px;
+      color: #333;
+    }
+
+    .product-card button {
+      padding: 8px 12px;
+      margin: 5px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .product-card button:hover {
+      background-color: #8061ba;
+    }
+
+    .popup {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="icon">☰</div>
+    <ul>
+      <li><a href="{{ url_for('home') }}">Home</a></li>
+      <li><a href="{{ url_for('edit_profile') }}">Profile</a></li>
+      <li><a href="#">Product Category</a></li>
+      <li><a href="{{ url_for('setting') }}">Settings</a></li>
+      <li><a href="#">Contact</a></li>
+      <li><a href="{{ url_for('logout') }}">Log out</a></li>
+      <li><a href="{{ url_for('cart') }}">Cart</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="header">
+      <h2>Search Results</h2>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search again..." autocomplete="off" />
+      <ul id="suggestions"></ul>
+    </div>
+
+    <div class="product-area" id="resultsContainer"></div>
+  </div>
+
+  <div class="popup" id="popup">Item added to cart!</div>
+
+  <script>
+    const resultsContainer = document.getElementById("resultsContainer");
+    const query = new URLSearchParams(window.location.search).get("q")?.toLowerCase() || "";
+    const searchInput = document.getElementById("searchInput");
+    const suggestions = document.getElementById("suggestions");
+    let allProductNames = [];
+
+    searchInput.addEventListener("input", () => {
+      const inputVal = searchInput.value.toLowerCase();
+      suggestions.innerHTML = "";
+      if (!inputVal) return suggestions.style.display = "none";
+
+      const matches = allProductNames.filter(name => name.toLowerCase().includes(inputVal)).slice(0, 5);
+      matches.forEach(name => {
+        const li = document.createElement("li");
+        li.textContent = name;
+        li.onclick = () => {
+          searchInput.value = name;
+          window.location.href = `{{ url_for('search') }}?q=${encodeURIComponent(name)}`;
+        };
+        suggestions.appendChild(li);
+      });
+
+      suggestions.style.display = matches.length ? "block" : "none";
+    });
+
+    document.addEventListener("click", e => {
+      if (!document.querySelector(".search-bar").contains(e.target)) {
+        suggestions.style.display = "none";
+      }
+    });
+
+    searchInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        const val = searchInput.value.trim();
+        if (val) window.location.href = `{{ url_for('search') }}?q=${encodeURIComponent(val)}`;
+      }
+    });
+
+    async function loadProductData() {
+      const res = await fetch('{{ url_for("static", filename="data/products.json") }}');
+      return await res.json();
+    }
+
+    async function populateResults() {
+      const data = await loadProductData();
+      const staticPath = "{{ url_for('static', filename='') }}";
+      let found = false;
+
+      for (const category in data) {
+        const products = data[category].filter(p => p.name.toLowerCase().includes(query));
+        if (products.length === 0) continue;
+
+        found = true;
+        const section = document.createElement("div");
+        section.className = "category-section";
+        section.innerHTML = `
+          <div class="titleM"><h3 class="category-title">${category}</h3></div>
+          <div class="slider-wrapper">
+            <button class="scroll-btn left" onclick="scrollSlider(this, -1)">&#8249;</button>
+            <div class="product-slider"></div>
+            <button class="scroll-btn right" onclick="scrollSlider(this, 1)">&#8250;</button>
+          </div>
+        `;
+
+        const slider = section.querySelector(".product-slider");
+
+        products.forEach(product => {
+          allProductNames.push(product.name);
+          const card = document.createElement("div");
+          card.className = "product-card";
+          card.innerHTML = `
+            <img src="${staticPath}${product.image}" alt="${product.name}" onload="updateScrollButtons(this.closest('.product-slider'))" />
+            <h4>${product.name}</h4>
+            <p>₹ ${product.price.toFixed(2)}</p>
+            <button onclick="viewProduct('${product.name}')">View Product</button>
+            <button onclick="addToCart('${product.name}', ${product.price}, '${product.image}', ${product.p_id})">Add to Cart</button>
+          `;
+          slider.appendChild(card);
+        });
+
+        resultsContainer.appendChild(section);
+
+        // fallback update in case images don't trigger
+        setTimeout(() => updateScrollButtons(slider), 500);
+        slider.addEventListener("scroll", () => updateScrollButtons(slider));
+      }
+
+      if (!found) resultsContainer.innerHTML = "<p>No products found for your search.</p>";
+    }
+
+    function scrollSlider(btn, dir) {
+      const slider = btn.parentElement.querySelector(".product-slider");
+      slider.scrollBy({ left: 250 * dir, behavior: "smooth" });
+    }
+
+    function updateScrollButtons(slider) {
+      const left = slider.parentElement.querySelector(".scroll-btn.left");
+      const right = slider.parentElement.querySelector(".scroll-btn.right");
+
+      left.style.display = slider.scrollLeft <= 5 ? "none" : "block";
+      right.style.display = slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 5 ? "none" : "block";
+    }
+
+    function viewProduct(name) {
+      window.location.href = "{{ url_for('product') }}?name=" + encodeURIComponent(name);
+    }
+
+    function addToCart(name, price, image, p_id) {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const existing = cart.find(p => p.name === name);
+      existing ? existing.quantity++ : cart.push({ name, price, image, p_id, quantity: 1 });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      showPopup(`${name} added to cart!`);
+    }
+
+    function showPopup(msg) {
+      const popup = document.getElementById("popup");
+      popup.innerText = msg;
+      popup.style.display = "block";
+      setTimeout(() => popup.style.display = "none", 2000);
+    }
+
+    window.onload = populateResults;
+  </script>
+</body>
+</html>

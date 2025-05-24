@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css?family=Outfit;wght@100;200;300;400;500&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "outfit", sans-serif;
+}
+  .flashes {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    list-style: none;
+    padding: 1em;
+    margin: 0;
+    text-align: center;
+  }
+
+  .flashes li {
+    display: inline-block;
+    padding: 0.75em 1.5em;
+    margin: 0.5em auto;
+    border-radius: 5px;
+    font-weight: bold;
+    font-family: sans-serif;
+  }
+
+  .flashes .success {
+    background-color: #d4edda;
+    color: #2c74a1;
+    border: 1px solid #c3e6cb;
+  }
+
+  .flashes .error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url(bg.jpg);
+    background-size: cover;
+    background-position: center;
+    
+}
+.container{
+    width: 420px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(9px);
+    color: white;
+    border-radius: 13px;
+    padding: 30px 40px;
+}
+.container h1{
+    text-align: center;
+    font-size: 39px;
+    font-weight: 600;
+    padding-bottom: 26px;
+    letter-spacing: 0.5px;
+}
+.container .form-input{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 5px 0;
+}
+.form-input input{
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    border-radius: 40px;
+    font-size: 16px;
+    color: white;
+    padding: 20px 45px 20px 20px;
+}
+.form-input input::placeholder{
+    color: white;
+}
+.form-input i{
+    position: absolute;
+    right: 10px;
+    top: 18px;
+    transform: translate(-50%);
+}
+.container .btn{
+    width: 100%;
+    height: 45px;
+    background: white;
+    border: none;
+    outline: none;
+    border-radius: 45px;
+    cursor: pointer;
+    font-size: 16px;
+    color: black;
+    font-weight: 550;
+    transition: all .4s ease-in-out;
+}
+.container .btn:hover{
+    transform: scale(1.05);
+}
+.login-link p a{
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+}
+.login-link p a:hover{
+    text-decoration: underline;
+
+}
+.container .login-link{
+    font-size: 14.5px;
+    text-align: center;
+    margin: 20px 0 15px;
+}

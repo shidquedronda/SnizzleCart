@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Checkout</title>
+<style>
+:root {
+  --accent: #DAD2FF;
+  --primary: #56388C;
+  --light-bg: #f4f9f6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--light-bg);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--accent);
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 100%;
+  background: var(--primary);
+  overflow: hidden;
+  transition: width 0.3s ease;
+  z-index: 1001;
+}
+
+.sidebar:hover {
+  width: 200px;
+}
+
+.sidebar .icon {
+  text-align: center;
+  font-size: 24px;
+  color: white;
+  padding: 20px 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 30px;
+  display: none;
+}
+
+.sidebar:hover ul {
+  display: block;
+}
+
+.sidebar ul li {
+  padding: 12px 20px;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  padding: 7px;
+}
+
+.sidebar ul li a:hover {
+  background: var(--accent);
+  border-radius: 4px;
+  color: black;
+}
+
+
+    .main-content {
+      margin-left: 60px;
+      padding: 20px;
+      flex-grow: 1;
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+
+    .checkout-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-summary {
+      margin-bottom: 30px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .total {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: right;
+      margin-top: 15px;
+      color: var(--primary);
+    }
+
+    .checkout-button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .empty {
+      color: #888;
+      font-size: 18px;
+    }
+    
+    .addr {
+      width: 1750px;
+      height: 120px;
+    }
+
+    .placeo {
+      padding: 8px 12px;
+      margin-left: 800px;
+      height: 40px;
+      width: 200px;
+      font-size: large;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      
+    }
+
+    .placeo:hover {
+      background-color: #76609e;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #d23030;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      z-index: 999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+</style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+<div class="sidebar">
+  <div class="icon">☰</div>
+  <ul>
+    <li><a href="{{ url_for('home') }}">Home</a></li>
+    <li><a href="{{ url_for('edit_profile') }}">Profile</a></li>
+    <li><a href="#">Product Category</a></li>
+    <li><a href="{{ url_for('setting') }}">Settings</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="{{ url_for('logout') }}">Log out</a></li>
+  </ul>
+</div>
+
+  <!-- Main content -->
+  <div class="main-content">
+    <h2>Checkout</h2>
+    <div class="checkout-container" id="checkout-container">
+      <div class="cart-summary" id="cart-summary"></div>
+
+      <div class="form-group">
+        <label for="address">Delivery Address</label>
+        <textarea class="addr" id="address" placeholder="Enter your delivery address" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="pincode">Pincode</label>
+        <input type="text" id="pincode" placeholder="Enter your pincode" required>
+      </div>
+
+      <div class="form-group">
+        <label for="expected-delivery">Expected Delivery Date</label>
+        <input type="text" id="expected-delivery" readonly>
+      </div>
+
+      <div class="form-group">
+        <label for="payment-method">Payment Method</label>
+        <select id="payment-method" required>
+          <option value="cod">Cash on Delivery</option>
+          <option value="online">Pay Online</option>
+        </select>
+      </div>
+
+      <button id="submit-btn" class="placeo" onclick="placeOrder()">Place Order</button>
+
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    let totalAmount = 0;
+
+    function loadCheckoutSummary() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const summary = document.getElementById("cart-summary");
+
+      if (cart.length === 0) {
+        summary.innerHTML = "<p class='empty'>Your cart is empty.</p>";
+        return;
+      }
+
+      totalAmount = 0;
+      summary.innerHTML = "<h3>Items:</h3>";
+
+      cart.forEach(product => {
+        const quantity = product.quantity || 1;
+        const subtotal = product.price * quantity;
+        totalAmount += subtotal;
+
+        const item = document.createElement("div");
+        item.className = "cart-item";
+        item.innerHTML = `
+          <span>${product.name} x ${quantity}</span>
+          <span>₹${subtotal.toFixed(2)}</span>
+        `;
+        summary.appendChild(item);
+      });
+
+      const totalEl = document.createElement("div");
+      totalEl.className = "total";
+      totalEl.id = "total-amount";
+      totalEl.textContent = `Total: ₹${totalAmount.toFixed(2)}`;
+      summary.appendChild(totalEl);
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
+    function getDeliveryDays(pincode) {
+      const pin = parseInt(pincode);
+      if (pin >= 800000 && pin <= 900000) return 3;
+      if (pin >= 700100 && pin <= 799999) return 5;
+      return 7;
+    }
+
+    function updateExpectedDelivery() {
+      const pincodeInput = document.getElementById("pincode").value.trim();
+      const expectedInput = document.getElementById("expected-delivery");
+
+      if (!pincodeInput || isNaN(pincodeInput)) {
+        expectedInput.value = "";
+        return;
+      }
+
+      const days = getDeliveryDays(pincodeInput);
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + days);
+      expectedInput.value = futureDate.toISOString().slice(0, 10); // Format: YYYY-MM-DD
+    }
+
+    async function placeOrder() {
+      const address = document.getElementById("address").value.trim();
+      const pincode = document.getElementById("pincode").value.trim();
+      const delivery_date = document.getElementById("expected-delivery").value.trim();
+      const paymentMethod = document.getElementById("payment-method").value;
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const submitBtn = document.getElementById("submit-btn");
+
+      if (!address || !pincode || !paymentMethod || !delivery_date) {
+        showToast("Please fill all details");
+        return;
+      }
+
+      if (cart.length === 0 || totalAmount < 1) {
+        showToast("Cart is empty or amount is invalid");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Placing order...";
+
+      try {
+        if (paymentMethod === "cod") {
+          const res = await fetch('/submit-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ address, pincode, delivery_date, payment_method: paymentMethod, cart })
+          });
+
+          const data = await res.json();
+          if (res.ok) {
+            showToast("Order placed with COD");
+            localStorage.removeItem("cart");
+            setTimeout(() => window.location.href = "/success", 1000);
+          } else {
+            showToast(data.error || "Failed to place order");
+          }
+        } else {
+          // Razorpay online payment
+          const response = await fetch('/create-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: totalAmount })
+          });
+
+          const orderData = await response.json();
+          if (!response.ok) throw new Error(orderData.error || "Failed to create Razorpay order");
+
+          const options = {
+            key: "rzp_test_DpgHww99csrn1x", // Replace in production
+            amount: orderData.amount,
+            currency: "INR",
+            name: "Your Store",
+            description: "Payment for Order",
+            order_id: orderData.id,
+            handler: async function (response) {
+              try {
+                const res = await fetch('/submit-order', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    address,
+                    pincode,
+                    delivery_date,
+                    payment_method: paymentMethod,
+                    cart,
+                    payment_id: response.razorpay_payment_id
+                  })
+                });
+
+                const result = await res.json();
+                if (res.ok) {
+                  alert("Payment successful and order placed!");
+                  localStorage.removeItem("cart");
+                  window.location.href = "/success";
+                } else {
+                  alert("Payment succeeded but failed to record order: " + (result.error || "Unknown error"));
+                  console.error(result);
+                }
+              } catch (err) {
+                alert("Error submitting order: " + err.message);
+              }
+            },
+            theme: { color: "#307253" }
+          };
+
+          const rzp = new Razorpay(options);
+          rzp.open();
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+        console.error(err);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Place Order";
+      }
+    }
+
+    document.getElementById("pincode").addEventListener("input", updateExpectedDelivery);
+    loadCheckoutSummary();
+  </script>
+</body>
+</html>

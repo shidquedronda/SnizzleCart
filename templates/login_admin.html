@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class="flashes">
+      {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #5cb85c; padding: 50px; display: flex;}
+        .container {max-width: 400px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; }
+        input[type=text], input[type=password] {
+            width: 380px; padding: 12px; margin: 8px 0 16px 0; border: 1px solid #ccc; border-radius: 4px;
+        }
+        button {
+            width: 100%; background-color: #5cb85c; color: white; padding: 14px; border: none; border-radius: 4px;
+        }
+        button:hover { background-color: #4cae4c; }
+        .link { text-align: center; margin-top: 10px; }
+        .image{
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+        }
+        .image_div{
+            margin-left: 100px;
+        }
+
+        
+  .flashes {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    list-style: none;
+    padding: 1em;
+    margin: 0;
+    text-align: center;
+  }
+
+  .flashes li {
+    display: inline-block;
+    padding: 0.75em 1.5em;
+    margin: 0.5em auto;
+    border-radius: 5px;
+    font-weight: bold;
+    font-family: sans-serif;
+  }
+
+  .flashes .success {
+    background-color: #d4edda;
+    color: #2c74a1;
+    border: 1px solid #c3e6cb;
+  }
+
+  .flashes .error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+  .forback{
+    margin-top: 20px;
+  }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image_div">
+            <img class="image" src="{{ url_for('static', filename='images/129-512.jpg') }}" alt="admin">
+        </div>
+        <h2>Admin Login</h2>
+        <form method="POST">
+            <label for="username">Username</label>
+            <input type="text" name="username" required>
+
+            <label for="password">Password</label>
+            <input type="password" name="password" required>
+
+            <button type="submit">Login</button>
+        </form>
+        <button class="forback" onclick="home()">Return to home</button>
+    </div>
+
+<script>
+    // Automatically hide flash messages after 3 seconds
+    setTimeout(() => {
+    const flashContainer = document.querySelector('.flashes');
+    if (flashContainer) {
+      flashContainer.style.transition = 'opacity 0.5s ease-out';
+      flashContainer.style.opacity = '0';
+      setTimeout(() => flashContainer.remove(), 500); // Remove from DOM
+    }
+   }, 3000); // 3000 ms = 3 seconds
+
+   function home(){
+    window.location.href = "/home"
+   }
+</script>
+
+
+</body>
+</html>

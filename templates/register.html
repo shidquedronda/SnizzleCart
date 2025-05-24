@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class="flashes">
+      {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration form</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <div class="container">
+        <form method="post" action="{{ url_for('register') }}">
+            <h1>Sign Up</h1>
+            <div class="form-input">
+                <input type="text" placeholder="name" name="name" required>
+            </div>
+            <div class="form-input">
+                <input type="text" placeholder="User ID" name="username" required>
+                <i class='bx bxs-user'></i>
+            </div>
+            <div class="form-input">
+                <input type="text" placeholder="address" name="Address" required>
+                <i class='bx bxs-location-plus'></i>
+            </div>
+            <div class="form-input">
+                <input type="text" maxlength="20" onkeypress="return event.charCode>=48 && event.charCode<=57" placeholder="Phone Number" name="PNumber">
+                <i class='bx bxs-phone'></i>
+            </div>
+            <div class="form-input">
+                <input type="password" placeholder="Password" name="password" required>
+                <i class='bx bxs-lock-alt'></i>
+            </div>
+            <div class="form-input">
+                <input type="password" placeholder="Confirm Password" required>
+                <i class='bx bxs-check-shield'></i>
+            </div>
+            <button type="submit" class="btn">Register Now</button>
+            <div class="login-link">
+                <p>Already Have an Account? <a href="{{ url_for('login') }}">Login</a></p>
+            </div>
+        </form>
+
+    </div>
+
+<script>
+    // Automatically hide flash messages after 3 seconds
+    setTimeout(() => {
+    const flashContainer = document.querySelector('.flashes');
+    if (flashContainer) {
+      flashContainer.style.transition = 'opacity 0.5s ease-out';
+      flashContainer.style.opacity = '0';
+      setTimeout(() => flashContainer.remove(), 500); // Remove from DOM
+    }
+   }, 3000); // 3000 ms = 3 seconds
+</script>
+
+</body>
+</html>

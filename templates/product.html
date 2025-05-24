@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Product Details</title>
+  <style>
+    :root {
+      --accent: #DAD2FF;
+      --primary: #56388C;
+      --light-bg: #f4f9f6;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--accent);
+      overflow: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    body::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 60px;
+      height: 100%;
+      background: var(--primary);
+      overflow: hidden;
+      transition: width 0.3s ease;
+      z-index: 1001;
+    }
+
+    .sidebar:hover {
+      width: 200px;
+    }
+
+    .sidebar .icon {
+      text-align: center;
+      font-size: 24px;
+      color: white;
+      padding: 20px 0;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 30px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .sidebar:hover ul {
+      max-height: 500px;
+    }
+
+    .sidebar ul li {
+      padding: 12px 20px;
+    }
+
+    .sidebar ul li a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 7px;
+    }
+
+    .sidebar ul li a:hover {
+      background: var(--accent);
+      border-radius: 4px;
+      color: black;
+    }
+
+    .main-content {
+      margin-left: 60px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .breadcrumb {
+      font-size: 14px;
+      color: #333;
+      margin: 10px 0 20px 10px;
+    }
+
+    .breadcrumb a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .breadcrumb span {
+      color: #555;
+    }
+
+    .product-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .gallery, .info {
+      flex: 1 1 300px;
+    }
+
+    .main-image {
+      width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .thumbnails {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 5px;
+    }
+
+    .thumbnails img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .thumbnails img:hover {
+      border-color: #307253;
+    }
+
+    .info h2 {
+      color: var(--primary);
+    }
+
+    .info p {
+      margin: 8px 0;
+      font-size: 16px;
+    }
+
+    .info .price {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .stock {
+      font-weight: bold;
+    }
+
+    .rating {
+      margin: 8px 0;
+      color: #ffa534;
+      font-size: 18px;
+    }
+
+    .buttons {
+      margin-top: 20px;
+    }
+
+    .buttons button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      border: none;
+      border-radius: 5px;
+      background: var(--primary);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .buttons button:hover {
+      background-color: #735aa2;
+    }
+
+    .description {
+      max-width: 1000px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .similar-products {
+      max-width: 100%;
+      margin-top: 30px;
+    }
+
+    .similar-products h3 {
+      color: var(--primary);
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+
+    .product-slider-wrapper {
+      position: relative;
+      padding: 0 40px;
+    }
+
+    .product-slider {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      scroll-behavior: smooth;
+    }
+
+    .product-slider::-webkit-scrollbar {
+      display: none;
+    }
+
+    .product-card {
+      min-width: 200px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+    }
+
+    .product-card:hover {
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-card img {
+      max-width: 100%;
+      height: 160px;
+      border-radius: 5px;
+    }
+
+    .product-card h4 {
+      margin: 10px 0 5px;
+      color: var(--primary);
+    }
+
+    .product-card p {
+      margin: 0 0 10px;
+      color: var(--primary);
+    }
+
+    .product-card button {
+      padding: 8px 12px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .product-card button:hover {
+      background-color: #735aa2;
+    }
+
+    .slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(100, 50, 150, 0.4);
+      border: none;
+      font-size: 20px;
+      color: white;
+      cursor: pointer;
+      padding: 10px;
+      z-index: 2;
+    }
+
+    .slider-btn.left {
+      left: 0;
+    }
+
+    .slider-btn.right {
+      right: 0;
+    }
+
+    .popup {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+      z-index: 999;
+    }
+
+    .not-found {
+      padding: 40px;
+      font-size: 20px;
+      color: #999;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .product-details {
+        flex-direction: column;
+      }
+
+      .product-slider-wrapper {
+        padding: 0 10px;
+      }
+
+      .sidebar {
+        width: 0;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .sidebar:hover {
+        width: 160px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="icon">☰</div>
+  <ul>
+    <li><a href="{{ url_for('home') }}">Home</a></li>
+    <li><a href="{{ url_for('edit_profile') }}">Profile</a></li>
+    <li><a href="#">Product Category</a></li>
+    <li><a href="{{ url_for('setting') }}">Settings</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="{{ url_for('logout') }}">Log out</a></li>
+    <li><a href="{{ url_for('cart') }}">Cart</a></li>
+  </ul>
+</div>
+
+<div class="main-content">
+  <div class="breadcrumb">
+    <a href="{{ url_for('home') }}">Home</a> &gt;
+    <a href="#">Category</a> &gt;
+    <span id="breadcrumb-product"></span>
+  </div>
+  <div id="productContainer"></div>
+  <div id="productDescription" class="description"></div>
+  <div class="similar-products" id="similarProducts"></div>
+</div>
+
+<div id="popup" class="popup">Item added to cart!</div>
+
+<script>
+  const productContainer = document.getElementById("productContainer");
+  const productDescription = document.getElementById("productDescription");
+  const similarProducts = document.getElementById("similarProducts");
+  const urlParams = new URLSearchParams(window.location.search);
+  const productName = urlParams.get("name")?.toLowerCase();
+  const staticPath = "{{ url_for('static', filename='') }}";
+  let productCategory = null;
+
+  async function loadProduct() {
+    try {
+      const res = await fetch('{{ url_for("static", filename="data/products.json") }}');
+      const data = await res.json();
+      const productsList = Object.values(data).flat();
+      let foundProduct = null;
+
+      for (const category in data) {
+        const match = data[category].find(p => p.name.toLowerCase() === productName);
+        if (match) {
+          foundProduct = match;
+          productCategory = category;
+          break;
+        }
+      }
+
+      if (!foundProduct) {
+        productContainer.innerHTML = `<p class="not-found">Product not found.</p>`;
+        return;
+      }
+
+      document.getElementById("breadcrumb-product").innerText = foundProduct.name;
+
+      const images = foundProduct.images || [foundProduct.image];
+      const p_id = foundProduct.p_id;
+      const brand = foundProduct.brand || "Unknown Brand";
+      const description = foundProduct.description || "No description available.";
+      const price = foundProduct.price;
+      const image = images[0];
+      const stock = foundProduct.stock ?? 5;
+      const rating = foundProduct.rating || 4.2;
+
+      productContainer.innerHTML = `
+        <div class="product-details">
+          <div class="gallery">
+            <img id="mainImage" src="${staticPath}${image}" alt="${foundProduct.name}" class="main-image">
+            <div class="thumbnails">
+              ${images.map(src => `<img src="${staticPath}${src}" onclick="changeImage('${staticPath}${src}')">`).join("")}
+            </div>
+          </div>
+          <div class="info">
+            <h2>${foundProduct.name}</h2>
+            <div class="rating">${'★'.repeat(Math.round(rating))} (${rating.toFixed(1)})</div>
+            <p><strong>Brand:</strong> ${brand}</p>
+            <p class="price">₹ ${price.toFixed(2)}</p>
+            <p class="stock" style="color: ${stock > 0 ? 'green' : 'red'}">${stock > 0 ? `In stock (${stock})` : 'Out of stock'}</p>
+            <div class="buttons">
+              <button onclick="buyNow('${foundProduct.name.replace(/'/g, "\\'")}', ${price}, '${image}')">Buy Now</button>
+              <button onclick="addToCart('${foundProduct.name.replace(/'/g, "\\'")}', ${price}, ${p_id}, '${image}')">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      productDescription.innerHTML = `<h3>Description</h3><p>${description}</p>`;
+      loadSimilarProducts(foundProduct.name, data[productCategory]);
+
+    } catch (error) {
+      console.error("Failed to load product:", error);
+    }
+  }
+
+  function changeImage(src) {
+    document.getElementById("mainImage").src = src;
+  }
+
+  function viewProduct(name) {
+    location.href = "{{ url_for('product') }}?name=" + encodeURIComponent(name);
+  }
+
+  function addToCart(name, price, p_id, image) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existing = cart.find(item => item.name === name);
+    if (existing) {
+      existing.quantity += 1;
+    } else {
+      cart.push({ name, price, image, p_id, quantity: 1 });
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    showPopup(`${name} added to cart!`);
+  }
+
+  function showPopup(message) {
+    const popup = document.getElementById("popup");
+    popup.innerText = message;
+    popup.style.display = "block";
+    setTimeout(() => popup.style.display = "none", 2000);
+  }
+
+  function buyNow(name, price, image) {
+    addToCart(name, price, 0, image);
+    window.location.href = "{{ url_for('checkout') }}";
+  }
+
+  function loadSimilarProducts(currentName, list) {
+    const sliderHTML = list.filter(p => p.name !== currentName).slice(0, 10).map(p => `
+      <div class="product-card">
+        <img src="/static/${p.image}" alt="${p.name}">
+        <h4>${p.name}</h4>
+        <p>₹ ${p.price.toFixed(2)}</p>
+        <button onclick="viewProduct('${p.name.replace(/'/g, "\\'")}')">View</button>
+      </div>
+    `).join("");
+
+    similarProducts.innerHTML = `
+      <h3>Similar Products</h3>
+      <div class="product-slider-wrapper">
+        <button class="slider-btn left">&#10094;</button>
+        <div class="product-slider">${sliderHTML}</div>
+        <button class="slider-btn right">&#10095;</button>
+      </div>
+    `;
+
+    const slider = document.querySelector(".product-slider");
+    const leftBtn = document.querySelector(".slider-btn.left");
+    const rightBtn = document.querySelector(".slider-btn.right");
+
+    leftBtn.onclick = () => slider.scrollBy({ left: -300, behavior: 'smooth' });
+    rightBtn.onclick = () => slider.scrollBy({ left: 300, behavior: 'smooth' });
+
+    slider.addEventListener("scroll", () => {
+      leftBtn.style.display = slider.scrollLeft > 0 ? "block" : "none";
+      rightBtn.style.display = (slider.scrollLeft + slider.clientWidth) < slider.scrollWidth ? "block" : "none";
+    });
+
+    setTimeout(() => slider.dispatchEvent(new Event("scroll")), 300);
+  }
+
+  loadProduct();
+</script>
+</body>
+</html>

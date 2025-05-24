@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Profile</title>
+<style>
+
+:root {
+  --accent: #DAD2FF;
+  --primary: #56388C;
+  --light-bg: #f4f9f6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--light-bg);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--accent);
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 100%;
+  background: var(--primary);
+  overflow: hidden;
+  transition: width 0.3s ease;
+  z-index: 1001;
+}
+
+.sidebar:hover {
+  width: 200px;
+}
+
+.sidebar .icon {
+  text-align: center;
+  font-size: 24px;
+  color: white;
+  padding: 20px 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 30px;
+  display: none;
+}
+
+.sidebar:hover ul {
+  display: block;
+}
+
+.sidebar ul li {
+  padding: 12px 20px;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  padding: 7px;
+}
+
+.sidebar ul li a:hover {
+  background: var(--accent);
+  border-radius: 4px;
+  color: black;
+}
+
+/* MAIN AREA */
+.main {
+  margin-left: 60px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.sidebar:hover ~ .main {
+  margin-left: 200px;
+}
+
+/* SEARCH BAR */
+.search-bar {
+  position: fixed;
+  left: 60px;
+  top: 0;
+  right: 0;
+  background: var(--primary);
+  padding: 15px;
+  padding-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+}
+
+.sidebar:hover ~ .main .search-bar {
+  left: 200px;
+}
+
+    
+
+    .main {
+      margin-left: 60px;
+      padding: 20px;
+      flex: 1;
+      width: calc(100% - 60px);
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 5px;
+      margin-bottom: 10px;
+    }
+
+    .form-container, .info-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .form-box, .info-box {
+      background-color: #ffffff;
+      width: 400px;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .form-box label,
+    .info-box label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .form-box input[type="text"] {
+      width: 380px;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .form-box button {
+      padding: 10px 15px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .form-box button:hover {
+      background-color: #6a519a;
+    }
+
+    .profile-preview img {
+      width: 270px;
+      height: 270px;
+      margin-left: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .custom-file-upload {
+      display: inline-block;
+      padding: 10px 15px;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+
+    .custom-file-upload:hover {
+      background-color: #6a519a;
+    }
+
+    .file-name {
+      margin-left: 10px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .image-preview img {
+      display: block;
+      margin-top: 15px;
+      max-width: 150px;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
+
+    .info-field {
+      margin-bottom: 12px;
+    }
+
+    .info-field span {
+      display: block;
+      color: #333;
+      font-weight: normal;
+      margin-top: 4px;
+    }
+
+    .namex {
+      margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+<div class="sidebar">
+  <div class="icon">☰</div>
+  <ul>
+    <li><a href="{{ url_for('home') }}">Home</a></li>
+    <li><a href="#">Product Category</a></li>
+    <li><a href="{{ url_for('setting') }}">Settings</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="{{ url_for('logout') }}">Log out</a></li>
+    <li><a href="{{ url_for('cart') }}">Cart</a></li>
+  </ul>
+</div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- Profile Edit Form -->
+    <div class="form-container">
+      <form class="form-box" action="{{ url_for('edit_profile') }}" method="post" enctype="multipart/form-data">
+        <div class="profile-preview">
+          <img id="previewImage" src="{{ url_for('static', filename=i.image.split('static/')[-1]) }}" alt="Profile Image" />
+        </div>
+
+        <h2>Edit Profile</h2>
+
+        <label for="profilePic">Change Profile Picture</label>
+        <label for="profilePic" class="custom-file-upload">Upload Image</label>
+        <input type="file" id="profilePic" name="profilePic" accept="image/*" onchange="previewFile()" />
+        <span id="file-name" class="file-name">No file chosen</span>
+        <div id="image-preview" class="image-preview"></div>
+
+        <label class="namex" for="name">Name</label>
+        <input type="text" id="name" name="name" value="{{ i.name }}" />
+
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
+
+    <!-- Display User Info Section -->
+    <div class="info-container">
+      <div class="info-box">
+        <h3 style="text-align:center; margin-bottom: 20px;">Your Info</h3>
+        <div class="info-field">
+          <label>Username</label>
+          <span>{{ i.username }}</span>
+        </div>
+        <div class="info-field">
+          <label>Name</label>
+          <span>{{ i.name }}</span>
+        </div>
+        <div class="info-field">
+          <label>Phone Number</label>
+          <span>{{ i.phoneN }}</span>
+        </div>
+        <div class="info-field">
+          <label>Address</label>
+          <span>{{ i.address }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function previewFile() {
+      const input = document.getElementById('profilePic');
+      const fileName = input.files.length > 0 ? input.files[0].name : 'No file chosen';
+      document.getElementById('file-name').textContent = fileName;
+
+      const preview = document.getElementById('image-preview');
+      preview.innerHTML = '';
+
+      const file = input.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          preview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  </script>
+
+</body>
+</html>

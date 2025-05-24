@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Your Orders</title>
+<style>
+    
+:root {
+  --accent: #DAD2FF;
+  --primary: #56388C;
+  --light-bg: #f4f9f6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--light-bg);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--accent);
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 100%;
+  background: var(--primary);
+  overflow: hidden;
+  transition: width 0.3s ease;
+  z-index: 1001;
+}
+
+.sidebar:hover {
+  width: 200px;
+}
+
+.sidebar .icon {
+  text-align: center;
+  font-size: 24px;
+  color: white;
+  padding: 20px 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 30px;
+  display: none;
+}
+
+.sidebar:hover ul {
+  display: block;
+}
+
+.sidebar ul li {
+  padding: 12px 20px;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  padding: 7px;
+}
+
+.sidebar ul li a:hover {
+  background: var(--accent);
+  border-radius: 4px;
+  color: black;
+}
+
+
+    .main {
+      margin-left: 60px;
+      padding: 40px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #56388C;
+      margin-bottom: 20px;
+    }
+
+    .order-box {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .item-row {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 7px;
+      margin-top: 5px;
+    }
+
+    .product-image {
+      width: 70px;
+      height: 100px;
+      border-radius: 10px;
+    }
+
+    .order-details {
+      flex-grow: 1;
+    }
+
+    .order-details h2 {
+      margin-top: 0;
+      color: #56388C;
+    }
+
+    .tracker {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 25px;
+      padding: 20px 0 10px;
+      margin-top: 2px;
+      width: 100%;
+    }
+
+    .tracker::before {
+      content: "";
+      position: absolute;
+      top: 25px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background-color: #ccc;
+      margin-top: 2px;
+      z-index: 0;
+      border-radius: 2px;
+    }
+
+    .progress {
+      position: absolute;
+      top: 25px;
+      height: 4px;
+      background-color: #56388C;
+      border-radius: 2px;
+      z-index: 1;
+      margin-top: 2px;
+      transition: width 0.6s ease-in-out;
+    }
+
+    .progress::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: -30px;
+      left: 100%;
+      background-color: #307253;
+      color: white;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+      pointer-events: none;
+      margin-top: 2px;
+    }
+
+    .progress:hover::after {
+      opacity: 1;
+    }
+
+    .step {
+      position: relative;
+      text-align: center;
+      flex: 1;
+      z-index: 2;
+    }
+
+    .circle {
+      width: 20px;
+      height: 20px;
+      margin: 0 auto;
+      background-color: #ccc;
+      border-radius: 50%;
+      transition: background-color 0.3s;
+    }
+
+    .step.active .circle {
+      background-color: #56388C;
+    }
+
+    .label {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+</style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+<div class="sidebar">
+  <div class="icon">☰</div>
+  <ul>
+    <li><a href="{{ url_for('home') }}">Home</a></li>
+    <li><a href="{{ url_for('edit_profile') }}">Profile</a></li>
+    <li><a href="#">Product Category</a></li>
+    <li><a href="{{ url_for('setting') }}">Settings</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="{{ url_for('logout') }}">Log out</a></li>
+  </ul>
+</div>
+
+  <!-- Main content -->
+  <div class="main">
+    <h1>Your Orders</h1>
+
+    {% if orders %}
+      {% for order in orders %}
+        <div class="order-box">
+          <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+          <p><strong>Delivery Date:</strong> {{ order.delivery_date.strftime('%d %b %Y') }}</p>
+          <p><strong>Status:</strong> {{ order.status }}</p>
+
+          {% set progress_width = '0%' %}
+          {% if order.status == 'Ordered' %}
+            {% set progress_width = '12%' %}
+          {% elif order.status == 'Shipped' %}
+            {% set progress_width = '38%' %}
+          {% elif order.status == 'Out for Delivery' %}
+            {% set progress_width = '62%' %}
+          {% elif order.status == 'Delivered' %}
+            {% set progress_width = '100%' %}
+          {% endif %}
+
+          <div class="tracker">
+            <div class="progress" style="width: {{ progress_width }};" data-tooltip="{{ progress_width }} complete"></div>
+
+            <div class="step {% if order.status in ['Ordered', 'Shipped', 'Out for Delivery', 'Delivered'] %}active{% endif %}">
+              <div class="circle"></div>
+              <div class="label">Ordered</div>
+            </div>
+
+            <div class="step {% if order.status in ['Shipped', 'Out for Delivery', 'Delivered'] %}active{% endif %}">
+              <div class="circle"></div>
+              <div class="label">Shipped</div>
+            </div>
+
+            <div class="step {% if order.status in ['Out for Delivery', 'Delivered'] %}active{% endif %}">
+              <div class="circle"></div>
+              <div class="label">Out for Delivery</div>
+            </div>
+
+            <div class="step {% if order.status == 'Delivered' %}active{% endif %}">
+              <div class="circle"></div>
+              <div class="label">Delivered</div>
+            </div>
+          </div>
+
+          {% for item in order['items'] %}
+            <div class="item-row">
+              <img src="{{ item.image if item.image else url_for('static', filename='default-product.jpg') }}" 
+                   alt="{{ item.product_name }}" class="product-image" />
+              <div class="order-details">
+                <h2>{{ item.product_name }}</h2>
+                <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+                <p><strong>Price:</strong> ₹{{ item.price }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>You have no orders yet.</p>
+    {% endif %}
+  </div>
+
+</body>
+</html>

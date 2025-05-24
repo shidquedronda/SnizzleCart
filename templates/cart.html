@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Your Cart</title>
+<style>
+:root {
+  --accent: #DAD2FF;
+  --primary: #56388C;
+  --light-bg: #f4f9f6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--light-bg);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--accent);
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 100%;
+  background: var(--primary);
+  overflow: hidden;
+  transition: width 0.3s ease;
+  z-index: 1001;
+}
+
+.sidebar:hover {
+  width: 200px;
+}
+
+.sidebar .icon {
+  text-align: center;
+  font-size: 24px;
+  color: white;
+  padding: 20px 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 30px;
+  display: none;
+}
+
+.sidebar:hover ul {
+  display: block;
+}
+
+.sidebar ul li {
+  padding: 12px 20px;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  padding: 7px;
+}
+
+.sidebar ul li a:hover {
+  background: var(--accent);
+  border-radius: 4px;
+  color: black;
+}
+
+    .main-content {
+      margin-left: 60px;
+      padding: 20px;
+      flex-grow: 1;
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+
+    .cart-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-items {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .cart-item p {
+      color: #56388C;
+    }
+
+    .item-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .cart-item img {
+      width: 80px;
+      height: auto;
+      border-radius: 5px;
+    }
+
+    .item-details h3 {
+      margin: 0;
+      font-size: 16px;
+      color: var(--primary);
+    }
+
+    .item-details p {
+      margin: 5px 0 0;
+      font-weight: bold;
+    }
+
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .quantity-controls button {
+      padding: 4px 10px;
+      font-size: 16px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .quantity-controls span {
+      font-size: 16px;
+      margin: 0 5px;
+    }
+
+    .remove-btn {
+      padding: 6px 12px;
+      background-color: #c0392b;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .checkout {
+      margin-top: 30px;
+      text-align: right;
+    }
+
+    .checkout button {
+      padding: 12px 24px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .empty {
+      color: var(--primary);
+      font-size: 18px;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: var(--primary);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      z-index: 999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+</style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+<div class="sidebar">
+  <div class="icon">☰</div>
+  <ul>
+    <li><a href="{{ url_for('home') }}">Home</a></li>
+    <li><a href="{{ url_for('edit_profile') }}">Profile</a></li>
+    <li><a href="#">Product Category</a></li>
+    <li><a href="{{ url_for('setting') }}">Settings</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="{{ url_for('logout') }}">Log out</a></li>
+  </ul>
+</div>
+
+  <!-- Main content -->
+  <div class="main-content">
+    <h2>Your Cart</h2>
+    <div class="cart-container">
+      <div class="cart-items" id="cart-items"></div>
+      <div class="checkout">
+        <button onclick="checkout()">Checkout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script>
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
+    function loadCart() {
+      const cartItems = document.getElementById("cart-items");
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      cartItems.innerHTML = "";
+
+      if (cart.length === 0) {
+        cartItems.innerHTML = "<p class='empty'>Your cart is empty.</p>";
+        return;
+      }
+
+      cart.forEach((product, index) => {
+        const quantity = product.quantity || 1;
+        const totalPrice = (product.price * quantity).toFixed(2);
+        const staticPath = "{{ url_for('static', filename='') }}";
+
+        const item = document.createElement("div");
+        item.className = "cart-item";
+
+        item.innerHTML = `
+          <div class="item-info">
+            <img src="${staticPath}${product.image}" alt="${product.name}">
+            <div class="item-details">
+              <h3>${product.name}</h3>
+              <p>₹ ${totalPrice}</p>
+            </div>
+          </div>
+          <div class="quantity-controls">
+            <button onclick="updateQuantity(${index}, -1)">-</button>
+            <span>${quantity}</span>
+            <button onclick="updateQuantity(${index}, 1)">+</button>
+          </div>
+          <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+        `;
+
+        cartItems.appendChild(item);
+      });
+    }
+
+    function updateQuantity(index, change) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      let item = cart[index];
+
+      if (!item.quantity) item.quantity = 1;
+      item.quantity += change;
+
+      if (item.quantity < 1) item.quantity = 1;
+
+      cart[index] = item;
+      localStorage.setItem("cart", JSON.stringify(cart));
+      loadCart();
+    }
+
+    function removeItem(index) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      loadCart();
+      showToast("Item removed from cart.");
+    }
+
+    function checkout() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      if (cart.length === 0) {
+        showToast("Your cart is empty.");
+        return;
+      }
+      window.location.href = "{{ url_for('checkout') }}";
+    }
+
+    loadCart();
+  </script>
+</body>
+</html>

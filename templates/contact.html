@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Contact Us</title>
+<style>
+    :root {
+      --accent: #DAD2FF;
+      --primary: #56388C;
+      --light-bg: #f4f9f6;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--accent);
+      display: flex;
+      overflow-y: auto;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 60px;
+      height: 100%;
+      background: var(--primary);
+      overflow: hidden;
+      transition: width 0.3s ease;
+      z-index: 1001;
+    }
+
+    .sidebar:hover {
+      width: 200px;
+    }
+
+    .sidebar .icon {
+      text-align: center;
+      font-size: 24px;
+      color: white;
+      padding: 20px 0;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 30px;
+      display: none;
+    }
+
+    .sidebar:hover ul {
+      display: block;
+    }
+
+    .sidebar ul li {
+      padding: 12px 20px;
+    }
+
+    .sidebar ul li a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 7px;
+    }
+
+    .sidebar ul li a:hover {
+      background: var(--accent);
+      border-radius: 4px;
+      color: black;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      margin-left: 60px;
+      padding: 30px;
+      flex: 1;
+    }
+
+    .main-content h2 {
+      color: #4f2d7f;
+      margin-bottom: 20px;
+    }
+
+    .faq-item {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .faq-item h4 {
+      margin-bottom: 8px;
+      color: #56388C;
+    }
+
+    .faq-item p {
+      margin: 0;
+      color: #333;
+    }
+
+    .contact-info {
+      margin-top: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .contact-info h4 {
+      margin-bottom: 10px;
+      color: #56388C;
+    }
+
+    .contact-info p {
+      margin: 5px 0;
+      font-size: 16px;
+    }
+
+.flash-message {
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  animation: fadeOut 1s ease-in-out 3s forwards;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+/* Success message styling */
+.flash-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* Error message styling (if you add support later) */
+.flash-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Fade out animation */
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+
+</style>
+</head>
+<body>
+
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="icon">☰</div>
+    <ul>
+      <li><a href="{{ url_for('home') }}">Home</a></li>
+      <li><a href="{{ url_for('edit_profile') }}">Profile</a></li>
+      <li><a href="#">Product Category</a></li>
+      <li><a href="{{ url_for('logout') }}">Log out</a></li>
+      <li><a href="{{ url_for('cart') }}">Cart</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash-message {{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+    <h2>Contact Us / FAQs</h2>
+
+    <div class="faq-item">
+      <h4>Q1: How can I track my order?</h4>
+      <p>You can track your order from the 'Orders' section in your profile. We’ll also send you tracking details by email.</p>
+    </div>
+
+    <div class="faq-item">
+      <h4>Q2: What is the return policy?</h4>
+      <p>You can return any product within 7 days of delivery if it's unused and in original packaging.</p>
+    </div>
+
+    <div class="faq-item">
+      <h4>Q3: How do I cancel an order?</h4>
+      <p>Go to 'Orders' in your profile and click on 'Cancel' next to the item you wish to cancel.</p>
+    </div>
+
+    <div class="faq-item">
+      <h4>Q4: Can I change my shipping address after placing the order?</h4>
+      <p>Address change is only possible before your order is shipped. Please contact support immediately.</p>
+    </div>
+
+    <div class="faq-item">
+      <h4>Q5: What payment methods are supported?</h4>
+      <p>We support UPI, debit/credit cards, net banking, and popular wallets.</p>
+    </div>
+
+
+    <!-- Contact Form -->
+<div class="contact-form" style="margin-top: 40px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+  <h4>Send us a message</h4>
+  <form method="POST" action="{{ url_for('contact') }}">
+    <div style="margin-bottom: 15px;">
+      <label for="name">Name:</label><br>
+      <input type="text" id="name" name="name" required style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label for="email">Email:</label><br>
+      <input type="email" id="email" name="email" required style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label for="message">Message:</label><br>
+      <textarea id="message" name="message" rows="4" required style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
+    </div>
+    <button type="submit" style="background: var(--primary); color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Submit</button>
+  </form>
+</div>
+
+
+    <div class="contact-info">
+      <h4>Still need help?</h4>
+      <p><strong>📞 Phone:</strong> +91-9876543210</p>
+      <p><strong>📧 Email:</strong> support@yourshop.com</p>
+    </div>
+  </div>
+
+</body>
+</html>

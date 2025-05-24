@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Home</title>
+<style>
+:root {
+  --accent: #DAD2FF;
+  --primary: #56388C;
+  --light-bg: #f4f9f6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--light-bg);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 100%;
+  background: var(--primary);
+  overflow: hidden;
+  transition: width 0.3s ease;
+  z-index: 1001;
+}
+
+.sidebar:hover {
+  width: 200px;
+}
+
+.sidebar .icon {
+  text-align: center;
+  font-size: 24px;
+  color: white;
+  padding: 20px 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 30px;
+  display: none;
+}
+
+.sidebar:hover ul {
+  display: block;
+}
+
+.sidebar ul li {
+  padding: 12px 20px;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  padding: 7px;
+}
+
+.sidebar ul li a:hover {
+  background: var(--accent);
+  border-radius: 4px;
+  color: black;
+}
+
+/* MAIN AREA */
+.main {
+  margin-left: 60px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.sidebar:hover ~ .main {
+  margin-left: 200px;
+}
+
+/* SEARCH BAR */
+.search-bar {
+  position: fixed;
+  left: 60px;
+  top: 0;
+  right: 0;
+  background: var(--primary);
+  padding: 15px;
+  padding-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+}
+
+.sidebar:hover ~ .main .search-bar {
+  left: 200px;
+}
+
+form {
+  position: relative;
+  max-width: 400px;
+  margin: 0 auto;
+  max-width: 300%;
+  width: 100%;
+}
+
+/* Search input styling */
+#searchInput {
+  max-width: 300%;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+}
+
+/* PROFILE SECTION */
+.profile {
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  right: -10px;
+}
+
+.profile img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.profile span {
+  font-size: large;
+  color: #ccc;
+  margin-left: 9px;
+}
+
+.borderw{
+  width: 56px;
+  height: 56px;
+  background-color: #d0b8ff;
+  padding: 3px;
+  border-radius: 50%;
+}
+
+/* SUGGESTIONS DROPDOWN */
+.suggestions {
+  position: absolute;
+  top: 100%; /* directly below the input */
+  left: 20px;
+  right: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 999;
+  display: none; /* hidden by default */
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Individual suggestion item */
+.suggestions div {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover effect for suggestion */
+.suggestions div:hover {
+  background-color: #f5f5f5;
+}
+
+/* SCROLLABLE AREA */
+.scrollable-area {
+  overflow-y: auto;
+  flex: 1;
+  padding-top: 80px;
+  background: var(--accent);
+}
+
+/* BANNER WRAPPER */
+.banner-wrapper {
+  display: flex;
+  width: 100%;
+  height: 300px;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: hidden;
+  background: var(--accent);
+}
+
+.sideimgL-container,
+.sideimgR-container {
+  position: relative;
+  width: 350px;
+  height: 300px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.sideimgL,
+.sideimgR {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Black fade on left */
+.sideimgL-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, var(--primary) 5%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Black fade on right */
+.sideimgR-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to left,  var(--primary) 5%, transparent 70%);
+  pointer-events: none;
+}
+
+
+
+/* BANNER SLIDER */
+.banner-slider {
+  width: 100%;
+  max-width: 1200px;
+  overflow: hidden;
+  position: relative;
+  background: var(--accent);
+}
+
+.banners {
+  display: flex;
+  width: 1200px;
+  height: 300px;
+  animation: slideBanners 9s linear infinite;
+}
+
+.banners img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  flex: 0 0 100%;
+}
+
+@keyframes slideBanners {
+  0%, 33.333% {
+    transform: translateX(0);
+  }
+  33.334%, 66.666% {
+    transform: translateX(-100%);
+  }
+  66.667%, 100% {
+    transform: translateX(-200%);
+  }
+}
+
+/* PRODUCT CATEGORY SECTION */
+.category-section {
+  margin-right: 30px;
+  background: var(--accent);
+  border-radius: 7px;
+  margin-top: 20px;
+}
+
+.category-title {
+  font-size: 28px;
+  color: var(--primary);
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.product-slider {
+  display: flex;
+  overflow-x: auto;
+  width: 1850px;
+  gap: 15px;
+  scroll-behavior: smooth;
+  padding-bottom: 10px;
+}
+
+/* PRODUCT CARD */
+.product_bg{
+  width: 170px;
+  height: 200px;
+  background-color: white;
+  margin-left: 17px;
+  border-radius: 8px;
+}
+
+.product-card {
+  flex: 0 0 auto;
+  width: 220px;
+  background: white;
+  border: 1px solid #d1c9e1;
+  border-radius: 8px;
+  text-align: center;
+  padding: 10px;
+  box-shadow: 0 2px 5px #917bbe;
+  transition: box-shadow 0.3s ease;
+  margin-left: 10px;
+}
+
+.product-card:hover {
+  box-shadow: 0 0 20px #9c7ed9;
+}
+
+.product-card img {
+  background: white;
+  height: 190px;
+  width: 140px;
+  margin: 4px;
+  border-radius: 3px;
+}
+
+.product-card h4 {
+  margin: 10px 0 5px;
+}
+
+.product-card p {
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.product-card button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  margin-top: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* POPUP */
+.popup {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  display: none;
+  z-index: 999;
+}
+
+/* LOGO */
+.logor {
+  width: 180px;
+  height: 60px;
+}
+
+
+.slider-container {
+  scrollbar-width: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.slider-container::-webkit-scrollbar{
+  display: none;
+
+}
+
+
+.slider-btn {
+  background-color: #a493c4;
+  color: black;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 20px;
+  height: 350px;
+  z-index: 10;
+  transition: background 0.2s;
+  margin-bottom: 18px;
+  margin-right: 10px;
+  user-select: none;
+
+}
+
+
+.slider-btn:hover {
+  background-color: #7a5ecf;
+  background: #7a5ecf;
+}
+
+.slider-btn:hover {
+  background-color: #7a5ecf;
+  background: #7a5ecf;
+}
+
+.slider-btn.left {
+  position: absolute;
+  background: linear-gradient(to right,  #b693f6, transparent); /* Transparent to solid */
+}
+
+.slider-btn.left:hover{
+  background: linear-gradient(to right, #b9a4f9, transparent); /* Slightly lighter on hover */
+}
+
+.slider-btn.right {
+  position: absolute;
+  right: 0;
+  background: linear-gradient(to left, #be9bff, transparent);
+}
+
+.slider-btn.right:hover{
+   background: linear-gradient(to left, #b39df8, transparent); /* Optional hover effect */
+}
+
+.product-slider {
+  scroll-behavior: smooth;
+  display: flex;
+  gap: 15px;
+  overflow: scroll;
+  scrollbar-width: none;
+}
+
+.product-slider::-webkit-scrollbar{
+  display: none;
+}
+
+
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="icon">☰</div>
+  <ul>
+    <li><a href="{{ url_for('edit_profile') }}">Profile</a></li>
+    <li><a href="/category">Product Category</a></li>
+    <li><a href="{{ url_for('setting') }}">Settings</a></li>
+    <li><a href="/contact">Contact</a></li>
+    <li><a href="{{ url_for('logout') }}">Log out</a></li>
+    <li><a href="{{ url_for('cart') }}">Cart</a></li>
+  </ul>
+</div>
+
+<div class="main">
+
+  <div class="search-bar">
+    <i><img class="logor" src="{{ url_for('static', filename='images/logo.png') }}" alt=""></i>
+    <form onsubmit="return goToSearch()">
+      <input id="searchInput" type="text" placeholder="Search products..." autocomplete="off"/>
+      <div id="suggestions" class="suggestions"></div>
+    </form>
+    <div id="profiled"></div>
+  </div>
+
+  <div class="scrollable-area" id="productContainer">
+    <div class="banner-wrapper">
+      <div class="sideimgL-container">
+        <img src="{{ url_for('static', filename='images/side_left.png') }}" class="sideimgL" alt="Fade to black left">
+      </div>
+      <div class="banner-slider">
+        <div class="banners">
+          <img src="{{ url_for('static', filename='images/6337620.jpg') }}" alt="Smartphones Sale">
+          <img src="{{ url_for('static', filename='images/5870566.jpg') }}" alt="Headphones Sale">
+          <img src="{{ url_for('static', filename='images/banner.jpg') }}" alt="Fashion Sale">
+        </div>
+      </div>
+      <div class="sideimgR-container">
+        <img src="{{ url_for('static', filename='images/side_right.png') }}" class="sideimgR" alt="Fade to black right">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="popup" class="popup">Item added to cart!</div>
+
+<script>
+  const productContainer = document.getElementById('productContainer');
+  let productsList = [];
+
+  const staticPath = "{{ url_for('static', filename='') }}";
+
+  async function loadProducts() {
+    try {
+      const response = await fetch('{{ url_for("static", filename="data/products.json") }}');
+      const data = await response.json();
+
+      // Populate global product list for suggestions
+      productsList = Object.values(data).flat();
+
+      for (const category in data) {
+        const section = document.createElement('div');
+        section.className = 'category-section';
+
+        section.innerHTML = `
+          <h3 class="category-title">${category}</h3>
+          <div class="slider-container">
+            <button class="slider-btn left">&#10094;</button>
+            <div class="product-slider"></div>
+            <button class="slider-btn right">&#10095;</button>
+          </div>
+        `;
+
+        const slider = section.querySelector('.product-slider');
+
+        data[category].forEach(product => {
+          const card = document.createElement('div');
+          card.className = 'product-card';
+          card.innerHTML = `
+            <div class='product_bg'><img src="${staticPath}${product.image}" alt="${product.name}"></div>
+            <h4>${product.name}</h4>
+            <p>₹ ${product.price.toFixed(2)}</p>
+            <button onclick="viewProduct('${encodeURIComponent(product.name)}')">View Product</button>
+            <button onclick="addToCart('${product.name}', ${product.price}, '${product.image}', ${product.p_id})">Add to Cart</button>
+          `;
+          slider.appendChild(card);
+        });
+
+        const leftBtn = section.querySelector('.slider-btn.left');
+        const rightBtn = section.querySelector('.slider-btn.right');
+
+        function updateButtonState() {
+          leftBtn.style.visibility = slider.scrollLeft <= 0 ? 'hidden' : 'visible';
+          rightBtn.style.visibility = (slider.scrollLeft + slider.offsetWidth >= slider.scrollWidth - 5) ? 'hidden' : 'visible';
+        }
+
+        slider.addEventListener('scroll', updateButtonState);
+        window.addEventListener('resize', updateButtonState);
+        leftBtn.addEventListener('click', () => slider.scrollBy({ left: -300, behavior: 'smooth' }));
+        rightBtn.addEventListener('click', () => slider.scrollBy({ left: 300, behavior: 'smooth' }));
+
+        requestAnimationFrame(() => updateButtonState());
+        productContainer.appendChild(section);
+      }
+    } catch (e) {
+      console.error("Error loading products:", e);
+    }
+  }
+
+  function viewProduct(name) {
+    window.location.href = "/product?name=" + name;
+  }
+
+  function addToCart(name, price, image, p_id) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existing = cart.find(item => item.name === name);
+    if (existing) {
+      existing.quantity += 1;
+    } else {
+      cart.push({ name, price, p_id, image, quantity: 1 });
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    showPopup(`${name} added to cart!`);
+  }
+
+  function showPopup(message) {
+    const popup = document.getElementById("popup");
+    popup.innerText = message;
+    popup.style.display = "block";
+    setTimeout(() => (popup.style.display = "none"), 2000);
+  }
+
+  function goToSearch() {
+    const query = document.getElementById("searchInput").value.trim();
+    if (query) {
+      window.location.href = "{{ url_for('search') }}?q=" + encodeURIComponent(query);
+    }
+    return false;
+  }
+
+  function showSuggestions(query) {
+    const suggestions = document.getElementById('suggestions');
+    suggestions.innerHTML = '';
+    if (!query) return;
+
+    const matches = productsList.filter(p =>
+      p.name.toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 5);
+
+    matches.forEach(product => {
+      const div = document.createElement('div');
+      div.textContent = product.name;
+      div.onclick = () => {
+        document.getElementById('searchInput').value = product.name;
+        suggestions.innerHTML = '';
+        goToSearch();
+      };
+      suggestions.appendChild(div);
+    });
+
+    suggestions.style.display = matches.length ? 'block' : 'none';
+  }
+
+  document.getElementById('searchInput').addEventListener('input', e => {
+    showSuggestions(e.target.value);
+  });
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-bar')) {
+      document.getElementById('suggestions').innerHTML = '';
+    }
+  });
+
+  fetch('/api/cookies')
+    .then(response => response.json())
+    .then(data => {
+      const pdata = document.getElementById('profiled');
+      pdata.innerHTML = '';
+      if (!data.length) return;
+
+      data.forEach(cookie => {
+        const prof = document.createElement('div');
+        prof.className = "profile";
+        prof.innerHTML = `
+          <div class="borderw"> <img src="${cookie.image}" alt="Profile Picture"> </div>
+          <span>${cookie.name}</span>
+        `;
+        pdata.appendChild(prof);
+      });
+    });
+
+  loadProducts();
+</script>
+
+</body>
+</html>

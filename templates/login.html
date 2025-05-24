@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div id="flash-container">
+      {% for category, message in messages %}
+        <div class="flash-message {{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+
+
+
+
+</style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <div class="wrapper">
+        <form method="post" action="{{ url_for('login') }}">
+            <h1>Welcom back</h1>
+            <div class="input-box form-group">
+                <input type="text" name="username" placeholder="User ID" required>
+                <i class='bx bxs-user'></i>
+            </div>
+            <div class="input-box">
+                <input type="password" name="password" placeholder="Password">
+                <i class='bx bxs-lock-alt'></i>
+            </div>
+            <div class="remember-forgot">
+                <label><input name="remember" type="checkbox">Remember me</label>
+                <a href="/forgot-password">Forgot Password</a>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <div class="register-link">
+                <p>Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>
+            </div>
+        </form>
+    </div>
+<script>
+  // Auto-remove after 3 seconds (matches fadeOut duration)
+  setTimeout(() => {
+    const container = document.getElementById('flash-container');
+    if (container) {
+      container.remove();
+    }
+  }, 3000);
+</script>
+
+
+
+</body>
+</html>     

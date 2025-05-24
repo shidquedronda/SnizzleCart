@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Orders View</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #5cb85c;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        th {
+            background-color: #5cb85c;
+            color: white;
+        }
+
+        select {
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 6px 12px;
+            background-color: #5cb85c;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #4cae4c;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul li {
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Orders View</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Product IDs</th>
+                <th>Price (Each)</th>
+                <th>Address</th>
+                <th>pincode</th>
+                <th>Delivery Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <form action="/admin/update-order-status" method="POST">
+                    <td>{{ order.order_id }}</td>
+                    <td>
+                        <ul>
+                            {% for item in order.products %}
+                            <li>{{ item.product_id }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for item in order.products %}
+                            <li>₹{{ item.price }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>{{ order.address }}</td>
+                    <td>{{ order.pincode }}</td>
+                    <td>{{ order.delivery_date }}</td>
+                    <td>
+                        <select name="status">
+                            <option value="Ordered" {% if order.status == 'Ordered' %}selected{% endif %}>Ordered</option>
+                            <option value="Shipped" {% if order.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+                            <option value="Out for Delivery" {% if order.status == 'Out for Delivery' %}selected{% endif %}>Out for Delivery</option>
+                            <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                        <button type="submit">Update</button>
+                    </td>
+                </form>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Update Info</title>
+<style>
+:root {
+  --accent: #DAD2FF;
+  --primary: #56388C;
+  --light-bg: #f4f9f6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--light-bg);
+  display: flex;
+  background-color: var(--accent);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 100%;
+  background: var(--primary);
+  overflow: hidden;
+  transition: width 0.3s ease;
+  z-index: 1001;
+}
+
+.sidebar:hover {
+  width: 200px;
+}
+
+.sidebar .icon {
+  text-align: center;
+  font-size: 24px;
+  color: white;
+  padding: 20px 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 30px;
+  display: none;
+}
+
+.sidebar:hover ul {
+  display: block;
+}
+
+.sidebar ul li {
+  padding: 12px 20px;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  padding: 7px;
+}
+
+.sidebar ul li a:hover {
+  background: var(--accent);
+  border-radius: 4px;
+  color: black;
+}
+
+    .form-container {
+      margin-left: 80px;
+      padding: 40px;
+      width: 100%;
+    }
+
+    form {
+      background-color: white;
+      padding: 30px;
+      max-width: 400px;
+      margin: 30px auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #866cb8;
+    }
+
+    .updated-info {
+      margin: 20px auto;
+      text-align: center;
+      font-size: 18px;
+      color: #307253;
+    }
+
+    #flash-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+    }
+
+    .flash-message {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      animation: fadeOut 3s forwards;
+    }
+
+    .flash-message.error {
+      background-color: #e74c3c;
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { opacity: 0; display: none; }
+    }
+
+    .borderw img{
+      width: 270px;
+      height: 270px;
+      margin-left: 0px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .borderw{
+      background-color: #c8b8e6;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      padding-top: 5px;
+      margin-left: 33px;
+    }
+
+    .profile{
+      text-align: center;
+    }
+
+    .profile span{
+      text-align: center;
+      font-size: larger;
+    }
+</style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+<div class="sidebar">
+  <div class="icon">☰</div>
+  <ul>
+    <li><a href="{{ url_for('edit_profile') }}">Profile</a></li>
+    <li><a href="#">Product Category</a></li>
+    <li><a href="{{ url_for('setting') }}">Settings</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="{{ url_for('logout') }}">Log out</a></li>
+    <li><a href="{{ url_for('cart') }}">Cart</a></li>
+  </ul>
+</div>
+
+
+  <!-- Main Form Container -->
+  <div class="form-container">
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div id="flash-container">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Update Phone Form -->
+    {% if section == 'phone' %}
+      <form method="post">
+        <div id="profiled"></div>
+        <input type="text" name="phoneN" value="{{ phoneN }}" placeholder="Enter new phone number">
+        <button type="submit">Update Phone</button>
+      </form>
+    {% endif %}
+
+    <!-- Update Address Form -->
+    {% if section == 'address' %}
+      <form method="post">
+        <div id="profiled"></div>
+        <input type="text" name="address" value="{{ address }}" placeholder="Enter new address">
+        <button type="submit">Update Address</button>
+      </form>
+    {% endif %}
+
+    <!-- Change Password Form -->
+    {% if section == 'password' %}
+      <form method="post" action="/change-password">
+        <div id="profiled"></div>
+        <h3 style="text-align:center; margin-top: 20px;">Change Password</h3>
+        <input type="password" name="current_password" placeholder="Current Password" required>
+        <input type="password" name="new_password" placeholder="New Password" required>
+        <input type="password" name="confirm_password" placeholder="Confirm New Password" required>
+        <button type="submit">Change Password</button>
+      </form>
+    {% endif %}
+
+  </div>
+
+<script>
+
+  fetch('/api/cookies')
+    .then(response => response.json())
+    .then(data => {
+      const pdata = document.getElementById('profiled');
+      pdata.innerHTML = '';
+
+      if (data.length === 0) {
+        console.log('No session user data found.');
+        return;
+      }
+
+      data.forEach(cookie => {
+        const prof = document.createElement('div');
+        prof.className = "profile";
+        prof.innerHTML = `
+          <div class="borderw"> <img src="${cookie.image}" alt="Profile Picture"> </div>
+          <span>${cookie.name}</span>
+        `;
+        pdata.appendChild(prof);
+      });
+    });
+
+</script>
+
+</body>
+</html>
