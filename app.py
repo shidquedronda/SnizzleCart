@@ -60,9 +60,7 @@ def get_db_connection():
     )
 
 # ---------------------- Routes ----------------------
-@app.route('/')
-def index():
-    return render_template('landing.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -354,7 +352,7 @@ def checkout():
 def landing():
     return render_template('Landing Page.html')
 
-@app.route('/home')
+@app.route('/')
 @login_required
 def home():
     print("User ID from current_user:", current_user.get_id())
