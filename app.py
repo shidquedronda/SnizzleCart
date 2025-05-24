@@ -48,12 +48,15 @@ def load_user(user_id):
     return None
 
 # ---------------------- DB Connection ----------------------
+import os
+
 def get_db_connection():
     return mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='Azmalgo9@',
-        database='user'
+        host=os.environ.get("DB_HOST"),
+        user=os.environ.get("DB_USER"),
+        password=os.environ.get("DB_PASS"),
+        database=os.environ.get("DB_NAME"),
+        port=int(os.environ.get("DB_PORT", 3306))
     )
 
 # ---------------------- Routes ----------------------
@@ -938,7 +941,7 @@ def remove_product(p_id):  # Use lowercase param name
     found = False
 
     for category in list(data.keys()):
-        updated_products = [p for p in data[category] if p.get("P_ID") != p_id]
+        updated_products = [p for p in data[category] if p.get("p_id") != p_id]
         if len(updated_products) != len(data[category]):
             data[category] = updated_products
             found = True
